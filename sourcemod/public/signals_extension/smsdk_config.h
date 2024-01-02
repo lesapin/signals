@@ -20,14 +20,14 @@
 #define _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
 
 /**
- * @file smsdk_config.h
- * @brief Contains macros for configuring basic extension information.
+ *  @file       smsdk_config.h
+ *  @brief      Contains macros for configuring basic extension information.
  */
 
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"Signals"
-#define SMEXT_CONF_DESCRIPTION	"POSIX signal callbacks for SourceMod"
-#define SMEXT_CONF_VERSION		"0.0.1.0"
+#define SMEXT_CONF_DESCRIPTION	"Linux signal callbacks for SourceMod"
+#define SMEXT_CONF_VERSION		"0.8.1.0"
 #define SMEXT_CONF_AUTHOR		"bezdmn"
 #define SMEXT_CONF_URL			"http://www.sourcemod.net/"
 #define SMEXT_CONF_LOGTAG		"SIGNALS"
@@ -56,6 +56,6 @@
 //#define SMEXT_ENABLE_TEXTPARSERS
 //#define SMEXT_ENABLE_USERMSGS
 //#define SMEXT_ENABLE_TRANSLATOR
-//#define SMEXT_ENABLE_ROOTCONSOLEMENU
+#define SMEXT_ENABLE_ROOTCONSOLEMENU
 
 #endif // _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_

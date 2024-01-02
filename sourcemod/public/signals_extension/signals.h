@@ -17,83 +17,85 @@
  */
 
 #pragma once
-#ifndef _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_MANAGER_H_
-#define _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_MANAGER_H_
+#ifndef _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_H_
+#define _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_H_
 
 /**
- * @file   signals.h
- * @brief  SignalsManager tracks the SignalHandlers assigned to POSIX
-           signals and takes care of adding/removing handlers safely.
+ *  @file       signals.h
+ *  @brief      Defines a SignalsManager class for managing signal handlers.
  */
 
-#include <signal.h>
-#include <IForwardSys.h>
-#include <set>
+#include <thread>
+#include <chrono>
+#include <memory>
+#include <atomic>
+#include "signal_handler.h"
 
-/**
- *  SignalHandler encapsulates all relevant information about a POSIX signal,
- *  including a pointer to the forward associated with the signal.
- */
-struct SignalHandler
-{
-public:
-    SignalHandler(int signalCode, SourceMod::IChangeableForward* signalForward)
-        : code(signalCode), forward(signalForward)
-    {};
+/* Maximum number of signal handlers that can be stored */
+#define MAX_SIGNALS 128
+/* SIGKILL is used as the default event value */
+#define DEFAULT_SIGNAL 9
 
-    /**
-     *  Get the forward pointer.
-     */
-    SourceMod::IChangeableForward* Get() { return forward; };
-
-    int code;
-
-private:
-    SourceMod::IChangeableForward* forward = nullptr;
-};
-
-/**
- *  Sort SignalHandlers in the Handlers set by their signal code.
- */
-struct SignalCmp
-{
-    bool operator()(const SignalHandler& lhs, const SignalHandler& rhs) const
-    {
-        return lhs.code < rhs.code;
-    };
-};
-
-/**
- *  SignalsManager takes a pointer to IForwardManager defined by SourceMod
- *  and connects plugin-supplied callbacks with POSIX signal handlers.
- */
 class SignalsManager 
 {
 public:
-    SignalsManager(SourceMod::IForwardManager* FM) 
-                    : ForwardManager(FM) 
+    /**
+     *  @brief  SignalsManager holds a private array of pointers to Signal Handler structs and is
+     *  responsible for managing their lifetime from creation to deletion. 
+     *
+     *  SignalsManager will periodically check if there are new signal invocations through a 
+     *  public atomic integer (SRCDS is multithreaded) that is also marked as volatile due to 
+     *  the asynchronous nature of POSIX reliable signals.
+     *
+     *  @param interval     How often (in ms) the SignalEvent value gets checked for new signal invocations.
+     */
+    SignalsManager(int interval = 5000) 
+                    : PollInterval(interval) 
     {};
 
     /**
-     *  Create a new signal handler (if possible), associate a
-     *  callback with its private forward and add it to Handlers.
+     *  @brief  Store a signal handler that was created elsewhere. If a handler for 
+     *  the same signal already exists, replace the stored one with the new
+     *  sigaction but preserve the original old state.
+     * 
+     *  @param signalCode   Numeric value of the signal.
+     *  @param handler      Raw pointer to a handler struct.
+     *  @return             False if a previous handler was replaced by the new one,
+     *                      true otherwise.
      */
-    bool AddHandler(int signalCode, SourceMod::IChangeableForward* forward);
+    bool AddHandler(int signalCode, SignalHandler* handler);
 
     /**
-     *  Release the signal handlers forward, remove it from
-     *  the Handlers set and then delete the object.
+     *  @brief  Remove a signal handler and its associated forward if one was created
+     *  by a plugin. Restore the previous state of the signal handler.
+     *
+     *  @param signalCode   Signal to reset.
      */
-    void RemoveHandler(int signalCode);
+    void ResetHandler(int signalCode);
+
+    /**
+     *  @brief  A publically accessible atomic variable that sigaction handler(s)
+     *  should modify to make SignalsManager aware of new signal invocations. 
+     *  Initialized to SIGKILL which cannot be masked, blocked, modified etc. 
+     */
+    std::atomic<int> SignalEvent{ DEFAULT_SIGNAL };
+
+    /**
+     *  @brief  Polls the SignalEvent variable and sleeps for a PollInterval period between 
+     *  each run. On SignalEvent change, executes the specified SignalHandler, resets the 
+     *  variable and continues polling. This function should be called from a separate thread. 
+     * 
+     *  Since signal handlers can't be async-safe about mutexes or conditional variables and let
+     *  them notify us when a signal was received and a variable was changed, polling the atomic 
+     *  variable periodically is probably the best solution for our purposes
+     */
+    void Poll();
 
 private:
-    SourceMod::IForwardManager* ForwardManager;
 
-    /**
-     *  The set of Handlers being managed, with signal codes 
-     *  used as comparators.
-     */
-    std::set<SignalHandler, SignalCmp> Handlers;
+    int PollInterval;
+
+    std::unique_ptr<SignalHandler> Handlers[ MAX_SIGNALS ];
 };
 
-#endif // _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_MANAGER_H_
+#endif // _INCLUDE_SOURCEMOD_EXTENSION_SIGNALS_H_

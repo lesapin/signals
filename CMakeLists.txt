@@ -32,7 +32,7 @@ set(SMSDK   "${ROOT}/sourcemod")
 set(HL2SDK  "${ROOT}/hl2sdk-tf2")
 set(HL2PUB  "${HL2SDK}/public")
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++14 -fpic -m32 -fno-exceptions -fno-threadsafe-statics -fvisibility-inlines-hidden \
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++14 -fpic -m32 -fno-exceptions -fexceptions -fno-threadsafe-statics -fvisibility-inlines-hidden \
                                         -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-delete-non-virtual-dtor")
 
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pipe -fpic -m32 -fno-strict-aliasing -Wall -Werror -Wno-unused -Wno-switch -Wno-array-bounds \

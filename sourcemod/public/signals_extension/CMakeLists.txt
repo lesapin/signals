@@ -27,11 +27,7 @@ add_custom_target(
     echo ALL COMMAND ${CMAKE_COMMAND} -E echo ${MY_INCLUDE}
 )
 
-# missing header file
-#execute_process(COMMAND ln -sf amtl/amtl/am-string.h ${SMPUB}/am-string.h)
 set(MY_INCLUDE ${MY_INCLUDE} . ..)
-#${HL2PUB}/game/server
-
 target_include_directories(signals PUBLIC ${MY_INCLUDE})
 
 target_link_libraries(signals PUBLIC -lm -m32 "-Wl,--exclude-libs,ALL" -shared -static-libgcc)

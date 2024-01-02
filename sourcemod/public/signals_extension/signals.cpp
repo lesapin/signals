@@ -16,26 +16,82 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *  @file       signals.cpp
+ *  @brief      Implements a SignalsManager class for managing signal handlers.
+ */
+
+#include <iostream>
 #include "signals.h"
 
 using namespace std;
 using namespace SourceMod;
 
-/**
- * @file   signals.cpp
- * @brief  SignalsManager tracks the SignalHandlers assigned to POSIX
-           signals and takes care of adding/removing handlers safely.
- */
-
-bool SignalsManager::AddHandler(int signalCode, SourceMod::IChangeableForward* forward)
+bool SignalsManager::AddHandler(int signalCode, SignalHandler* handler)
 {
-    // Do signals stuff here
+    if (Handlers[signalCode] != nullptr)
+    {
+        // Keep it simple for now
+    }
 
-    // Create a new handler unless one already exists
-    return Handlers.emplace(SignalHandler(signalCode, forward)).second;
+    Handlers[signalCode] = unique_ptr<SignalHandler>(handler);
+
+    return true;
 }
 
-void SignalsManager::RemoveHandler(int signalCode)
+void SignalsManager::ResetHandler(int signalCode)
 {
+    if (Handlers[signalCode] != nullptr)
+    {
+        // Keep it simple for now
+        Handlers[signalCode]->Reset();          /* Resets the signal handler */
+        Handlers[signalCode].reset( nullptr );  /* Resets the handler object */
+    }
+}
 
+void SignalsManager::Poll()
+{
+    // Expected value inside the SignalEvent atomic
+    int expected = DEFAULT_SIGNAL;
+
+    // Using compare_exchange_weak() inside a loop is preferrable to
+    // compare_exchange_strong() for better performance and because some 
+    // misses are acceptable here.
+    while (true)
+    {
+        cout << "Polling.." << endl;
+
+        // If $SignalEvent != expected, replaces expected with the contained value. 
+        if (!SignalEvent.compare_exchange_weak(expected, DEFAULT_SIGNAL))
+        {
+            cout << "Signal event encountered. signal code: " << expected << endl;
+
+            if (Handlers[expected] != nullptr)
+            {
+                // Trying out some simple exceptions handling.
+                try 
+                {
+                    cout << "Calling forward" << endl;
+                    int ret = Handlers[expected]->ExecForward();
+                    if (ret != SP_ERROR_NONE) throw(ret);
+                }
+                catch (int& e)
+                {
+                    // deal with bad callbacks..
+                    continue;
+                }
+            }
+            else
+            {
+                // do something else..
+            }
+
+            expected = DEFAULT_SIGNAL;
+
+            // Reset the SignalEvent once we are done.
+            SignalEvent.store(DEFAULT_SIGNAL);
+        }
+
+        this_thread::sleep_for(chrono::milliseconds(PollInterval));
+    }
 }
