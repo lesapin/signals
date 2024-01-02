@@ -1,6 +1,6 @@
 Linux signal callbacks for SourceMod
 
-Building on Windows 10 with VS2022 and CMake
+Building on Windows 10 with Visual Studio 2022 and CMake
 
 This folder should be extracted in the same folder with your SourceMod SDK and HL2SDKs.
 
@@ -11,7 +11,7 @@ This folder should be extracted in the same folder with your SourceMod SDK and H
 5. Under Tools > CMake > General, select "Always use CMake presets", close the current folder and reopen it again. This should make the connections and configuration managers appear in the top bar. Refer to [1] if you have any problems.
 6. Select "WSL: Debian" (or your flavour of Linux) and the Linux Debug configuration. Modify the _CMakePresets.json_ file to include more build configurations for your liking.
 
-Your files should now get rsynced to the WSL system. Building happens on the WSL automatically when you choose to build on VS.
+Your files should now get rsynced to the WSL system and all builds should happen there.
 
 
 [1] https://learn.microsoft.com/en-us/cpp/build/walkthrough-build-debug-wsl2?view=msvc-170
