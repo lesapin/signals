@@ -21,7 +21,7 @@
 #
 cmake_minimum_required (VERSION 3.7)
 
-project ("signals"	VERSION 0.8.1
+project ("signals"  VERSION 0.8.1
                     DESCRIPTION "Linux signals extension for SourceMod"
                     LANGUAGES CXX)
 
