@@ -26,7 +26,7 @@
 
 using namespace std;
 
-static SignalsManager*	Manager;		/**< SignalsManager is made a local object				*/
+static SignalsManager*		Manager;	/**< SignalsManager is made a local object				*/
 SignalForwards			g_Extension;	/**< Global singleton for extension's main interface	*/
 
 SMEXT_LINK(&g_Extension);
@@ -115,7 +115,7 @@ void SigAction(int signal, siginfo_t* info, void* ucontext)
 	//	to be handled first if the current SignalEvent isn't on default value.
 	if (current == DEFAULT_SIGNAL)										
 	{
-		Manager->SignalEvent.store(signal);					/* Atomically replace the current value */
+		Manager->SignalEvent.store(signal);
 	}
 	else
 	{
