@@ -6,7 +6,7 @@ This folder should be extracted in the same folder with your SourceMod SDK and H
 
 1. Install Windows Subsystem for Linux. Check that the installed WSL is version 2 using "wsl --list -v".
 2. In the (Debian based) Linux, install CMake and the development environment including multiarch support  with "sudo dpkg --add-architecture i386; sudo apt-get update && sudo apt-get upgrade" and "sudo apt-get install build-essential cmake gcc-multilib g++-multilib"
-3. Open or install Visual Studio. You should include Linux support in the installer to view and browse all Linux header files on your Windows machine.
+3. Open or install Visual Studio. You should include "Workload for Linux development with C++" in the installer to view and browse all Linux header files on your Windows machine.
 4. In Visual Studio, open the folder where the top level _CMakeLists.txt_ is located. 
 5. Under Tools > CMake > General, select "Always use CMake presets", close the current folder and reopen it again. This should make the connections and configuration managers appear in the top bar. Refer to [1] if you have any problems.
 6. Select "WSL: Debian" (or your flavour of Linux) and the Linux Debug configuration. Modify the _CMakePresets.json_ file to include more build configurations for your liking.
