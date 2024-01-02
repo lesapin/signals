@@ -28,6 +28,7 @@ add_custom_target(
 )
 
 set(MY_INCLUDE ${MY_INCLUDE} . ..)
+
 target_include_directories(signals PUBLIC ${MY_INCLUDE})
 
 target_link_libraries(signals PUBLIC -lm -m32 "-Wl,--exclude-libs,ALL" -shared -static-libgcc)
