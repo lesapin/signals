@@ -25,7 +25,6 @@
  *  @brief      Defines and implements a container class used in signal transactions.
  */
 
-//#include <iostream>
 #include <signal.h>
 #include <IForwardSys.h>
 #include "smsdk_ext.h"
