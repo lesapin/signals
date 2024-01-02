@@ -31,12 +31,12 @@ class SignalForwards : public SDKExtension
 {
 public:
 	/**
-	 *	@brief	Initialize Signals extension.
+	 *  	@brief Initialize Signals extension.
 	 */
 	virtual bool SDK_OnLoad(char *error, size_t maxlen, bool late);
 
 	/**
-	 *	@brief	Cleanup and release all the forwards.
+	 *  	@brief	Cleanup and release all the forwards.
 	 */
 	virtual void SDK_OnUnload();
 
@@ -63,7 +63,7 @@ cell_t RemoveHandler(IPluginContext* pContext, const cell_t* params);
  *	handler, the safest thing to do here is to change the state of some (global) atomic variable.
  * 
  *	@param signal		Numeric value of the signal invoking the handler
- *	@param info			Structure containing further information about the signal
+ *	@param info		Structure containing further information about the signal
  *	@param ucontext		Pointer to a ucontext_t struct containing user-space stack information
  */
 void SigAction(int signal, siginfo_t* info, void* ucontext);
