@@ -8,7 +8,7 @@ This folder should be extracted in the same folder with your SourceMod SDK and H
 
 2. In the (Debian based) Linux, install CMake and the development environment including multiarch support  with "sudo dpkg --add-architecture i386; sudo apt-get update && sudo apt-get upgrade" and "sudo apt-get install build-essential cmake ninja-build rsync zip gcc-multilib g++-multilib"
 
-3. Open or install Visual Studio. You should include "Workload for Linux development with C++" in the installer to view and browse all Linux header files on your Windows machine.
+3. Open or install Visual Studio. You should include "Workload for Linux development with C++" in the installer to make IntelliSense aware of any Linux headers in your code.
 
 4. In Visual Studio, open the folder where the top level _CMakeLists.txt_ is located. 
 
