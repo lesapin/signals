@@ -69,7 +69,8 @@ cell_t CreateHandler(IPluginContext* pContext, const cell_t* params)
 
 	auto Forward = forwards->CreateForwardEx(NULL, ET_Event, 0, NULL);
 
-	rootconsole->ConsolePrint("sigevent: %i", Manager->SignalEvent.load());
+	//rootconsole->ConsolePrint("sigevent: %i", Manager->SignalEvent.load());
+	//rootconsole->ConsolePrint("funcid: %i", static_cast<funcid_t>(params[2]));
 
 	// A callback that our handler will call when the signal is received.
 	if (!Forward->AddFunction(pContext, static_cast<funcid_t>(params[2])))
@@ -82,15 +83,15 @@ cell_t CreateHandler(IPluginContext* pContext, const cell_t* params)
 	// Do something if the old signal handler was anything other than SIG_IGN | SIG_DFL
 	if (SigactionOld.sa_handler == SIG_IGN)
 	{
-		rootconsole->ConsolePrint("old sa_handler: SIG_IGN ");
+		//rootconsole->ConsolePrint("old sa_handler: SIG_IGN ");
 	}
 	else if (SigactionOld.sa_handler == SIG_DFL)
 	{
-		rootconsole->ConsolePrint("old sa_handler: SIG_DFL ");
+		//rootconsole->ConsolePrint("old sa_handler: SIG_DFL ");
 	}
 	else
 	{
-		rootconsole->ConsolePrint("old sigaction was a handler ");
+		//rootconsole->ConsolePrint("old sigaction was a handler ");
 		//TODO
 	}
 
@@ -141,11 +142,14 @@ bool SignalForwards::SDK_OnLoad(char* error, size_t maxlen, bool late)
 
 void SignalForwards::SDK_OnUnload()
 {
+	// Causes the signal thread to break loop.
+	Manager->SignalEvent.store(-1);
+
+	// Make sure to synchronize all threads.
+	SignalThread->join();
+
 	// Calling delete on Manager causes the unique_ptr Handlers array to 
 	// go out of scope, invoking the destructors for each SignalHandler where 
 	// we take care of releasing all the forwards that were assigned here. 
 	delete Manager;
-
-	// Synchronize the signal polling thread.
-	SignalThread->join();
 }
