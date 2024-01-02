@@ -5,17 +5,18 @@ Linux signal callbacks for SourceMod
 
 The build folder structure should be
 
-| HL2SDK/
-| ...
-| sourcemod-sdk/
-|- sourcepawn/
-  |- core/
-  |- ...
-  |- public/
-    |- extensions/
-    |- amtl/
-    |- ...
-    |- __signals-extension/__
-      |- our files
-|- __CMakeLists.txt__
-|- __CMakePresets.json__
+| HL2SDK/  
+| ...  
+| sourcemod-sdk/  
+|- sourcepawn/  
+  |- core/  
+  |- ...  
+  |- public/  
+    |- extensions/  
+    |- amtl/  
+    |- ...  
+    |- __signals-extension/__  
+      |- our files   
+|- __CMakeLists.txt__  
+|- __CMakePresets.json__  
+
