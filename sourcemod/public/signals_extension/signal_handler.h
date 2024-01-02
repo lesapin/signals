@@ -47,7 +47,7 @@ public:
      */
     SignalHandler(int signal, SourceMod::IChangeableForward* signalForward, struct sigaction saNew, struct sigaction saOld)
                     : Code(signal), Forward(signalForward), SigactionNew(saNew), SigactionOld(saOld) 
-    {/*std::cout << "signalhandler ctor called" << std::endl;*/ };
+    {};
 
     /**
      *  @brief  SourceMod does not automatically clean up forwards for us.
@@ -55,7 +55,6 @@ public:
     ~SignalHandler()
     {
         forwards->ReleaseForward(Forward);
-        //std::cout << "signalhandler dtor called" << std::endl;
     };
 
     /**
@@ -64,7 +63,7 @@ public:
      * 
      *  @return     Zero if the subcall executed without errors, otherwise an error code.
      */
-    int ExecForward() { /*std::cout << "exec called" << std::endl;*/ return Forward->Execute(); };
+    int ExecForward() { return Forward->Execute(); };
 
     /**
      *  @brief  Reset this signal to its original handler.
