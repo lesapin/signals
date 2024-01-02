@@ -2,7 +2,7 @@ Linux signal callbacks for SourceMod
 
 Building on Windows 10 with VS2022 and CMake
 
-This folder should be extracted where your sourcemod extension build folder is. Also make sure that you have the top-level _CMakeLists.txt_ at the same level with SourceMod SDK and other HL2 SDKS.
+This folder should be extracted in the same folder with your SourceMod SDK and HL2SDKs.
 
 1. Install Windows Subsystem for Linux. Check that the installed WSL is version 2 using "wsl --list -v".
 2. In the (Debian based) Linux, install CMake and the development environment including multiarch support  with "dpkg --add-architecture i386; apt update && apt upgrade" and "apt-get install build-essential cmake gcc-multilib g++-multilib"
