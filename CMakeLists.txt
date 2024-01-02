@@ -21,8 +21,8 @@
 #
 cmake_minimum_required (VERSION 3.7)
 
-project ("signals"	VERSION 1.0
-                    DESCRIPTION "POSIX Signals Extension for SourceMod"
+project ("signals"	VERSION 0.8.1
+                    DESCRIPTION "Linux signals extension for SourceMod"
                     LANGUAGES CXX)
 
 set(RELATIVE_ROOT ".")
