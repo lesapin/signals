@@ -21,7 +21,6 @@
  *  @brief      Implements a SignalsManager class for managing signal handlers.
  */
 
-//#include <iostream>
 #include "signals.h"
 
 using namespace std;
@@ -59,13 +58,9 @@ void SignalsManager::Poll()
     // misses are acceptable here.
     while (true)
     {
-        //cout << "Polling.." << endl;
-
         // If $SignalEvent != expected, replaces expected with the contained value. 
         if (!SignalEvent.compare_exchange_weak(expected, DEFAULT_SIGNAL))
         {
-            //cout << "Signal event encountered. signal code: " << expected << endl;
-
             if (expected >= 0 && Handlers[expected] != nullptr)
             {
                 // Trying out some simple exceptions handling.
