@@ -1,2 +1,2 @@
 # sm_signals
-POSIX signal callbacks for SourceMod
+Linux signal callbacks for SourceMod
