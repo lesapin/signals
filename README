@@ -1,11 +1,18 @@
 Linux signal callbacks for SourceMod
 
 Building on Windows 10 with VS2022 and CMake
--------------------------------
 
-This folder should be extracted where your sourcemod extension build folder is. Also make sure that you have the top-level __CMakeLists.txt__ at the same level with SourceMod SDK and other HL2 SDKS.
+This folder should be extracted where your sourcemod extension build folder is. Also make sure that you have the top-level _CMakeLists.txt_ at the same level with SourceMod SDK and other HL2 SDKS.
 
-1. Install Windows Subsystem for Linux. Check that the installed WSL is version 2 using "wsl --list -v"
-2. In the (Debian based) Linux, install CMake and the development environment including multiarch support  with "dpkg --add-architecture i386; apt-get update; apt-get upgrade; apt-get install build-essential cmake gcc-multilib g++-multilib"
+1. Install Windows Subsystem for Linux. Check that the installed WSL is version 2 using "wsl --list -v".
+2. In the (Debian based) Linux, install CMake and the development environment including multiarch support  with "dpkg --add-architecture i386; apt update && apt upgrade; apt-get install build-essential cmake gcc-multilib g++-multilib"
+3. Open or install Visual Studio. Include Linux support in the installer to view and browse all Linux header files on your Windows machine.
+4. In Visual Studio, open the folder where the top level _CMakeLists.txt_ is located. 
+5. Under Tools > CMake > General, select "Always use CMake presets", close the current folder and reopen it again. This should make the connections and configuration managers appear in the top bar. Refer to [1] if you have any problems.
+6. Select "WSL: Debian" (or your flavour of Linux) and the Linux Debug configuration. Modify the _CMakePresets.json_ file to include more build configurations for your liking.
 
+Your files should now get rsynced to the WSL system. Building happens on the WSL automatically when you choose to build on VS.
+
+
+[1] https://learn.microsoft.com/en-us/cpp/build/walkthrough-build-debug-wsl2?view=msvc-170
 
