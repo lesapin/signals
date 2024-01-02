@@ -25,14 +25,14 @@
  */
 
 /* Basic information exposed publicly */
-#define SMEXT_CONF_NAME		    "Signals"
-#define SMEXT_CONF_DESCRIPTION  "Linux signal callbacks for SourceMod"
-#define SMEXT_CONF_VERSION		"0.8.1.0"
-#define SMEXT_CONF_AUTHOR		"bezdmn"
-#define SMEXT_CONF_URL		    "http://www.sourcemod.net/"
-#define SMEXT_CONF_LOGTAG		"SIGNALS"
-#define SMEXT_CONF_LICENSE		"GPLv3"
-#define SMEXT_CONF_DATESTRING	__DATE__
+#define SMEXT_CONF_NAME		        "Signals"
+#define SMEXT_CONF_DESCRIPTION    "Linux signal callbacks for SourceMod"
+#define SMEXT_CONF_VERSION		    "0.8.1.0"
+#define SMEXT_CONF_AUTHOR		      "bezdmn"
+#define SMEXT_CONF_URL		        "http://www.sourcemod.net/"
+#define SMEXT_CONF_LOGTAG		      "SIGNALS"
+#define SMEXT_CONF_LICENSE		    "GPLv3"
+#define SMEXT_CONF_DATESTRING	    __DATE__
 
 /**
  * @brief Exposes plugin's main interface.
