@@ -16,12 +16,12 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
-#define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
+#ifndef _INCLUDE_SOURCEMOD_SIGNALS_EXTENSION_PROPER_H_
+#define _INCLUDE_SOURCEMOD_SIGNALS_EXTENSION_PROPER_H_
 
 /**
- *	@file		extension.h
- *	@brief		Main definitions file of the extension.
+ *  @file		extension.h
+ *  @brief		Main definitions file of the extension.
  */
 
 #include "smsdk_ext.h"
@@ -29,53 +29,53 @@
 
 enum ErrCodes
 {
-	NoError = 0,
-	Error,
-	SigactionError,
-	SAHandlerError,
-	ForwardError,
-	FuncCountError,
-	CallbackError
+    NoError = 0,
+    Error,
+    SigactionError,
+    SAHandlerError,
+    ForwardError,
+    FuncCountError,
+    CallbackError
 };
 
 class SignalForwards : public SDKExtension
 {
 public:
-	/**
-	 *	@brief	Initialize Signals extension.
-	 */
-	virtual bool SDK_OnLoad(char *error, size_t maxlen, bool late);
+    /**
+     *  @brief	Initialize Signals extension.
+     */
+    virtual bool SDK_OnLoad(char *error, size_t maxlen, bool late);
 
-	/**
-	 *	@brief	Cleanup and release all the forwards.
-	 */
-	virtual void SDK_OnUnload();
+    /**
+     *  @brief	Cleanup and release all the forwards.
+     */
+    virtual void SDK_OnUnload();
 };
 
 /**
- *	@brief	Native functions exposed to plugins
+ *  @brief	Native functions exposed to plugins
  */
 cell_t CreateHandler(IPluginContext* pContext, const cell_t* params);
 
 /**
- *	@brief	Native functions exposed to plugins
+ *  @brief	Native functions exposed to plugins
  */
 cell_t RemoveHandler(IPluginContext* pContext, const cell_t* params);
 
 /**
- *	@brief	SigAction specifies the signal handler in a sigaction struct where the SA_SIGINFO flag is set.
- *	Only functions that are considered async-signal-safe should be called from within a signal handler.
+ *  @brief	SigAction specifies the signal handler in a sigaction struct where the SA_SIGINFO flag is set.
+ *  Only functions that are considered async-signal-safe should be called from within a signal handler.
  * 
- *	Calling an IForwardManager->Execute() MIGHT be reentrant and therefore async-signal-safe
- *  	...\sourcemod\sourcepawn\vm\scripted-invoker.cpp : ScriptedInvoker::Execute(cell_t* result)
- *      and ScriptedInvoker::Invoke(cell_t* result) seem to imply so, also
- *      ...\sourcemod\core\logic\ForwardSys.cpp : CForward::Execute(cell_t *result, IForwardFilter *filter)
+ *  Calling an IForwardManager->Execute() MIGHT be reentrant and therefore async-signal-safe
+ *  ...\sourcemod\sourcepawn\vm\scripted-invoker.cpp : ScriptedInvoker::Execute(cell_t* result)
+ *  and ScriptedInvoker::Invoke(cell_t* result) seem to imply so, also
+ *  ...\sourcemod\core\logic\ForwardSys.cpp : CForward::Execute(cell_t *result, IForwardFilter *filter)
  * 
- *	Are HeapAlloc and HeapPop async-safe? If number of params is kept zero then these should never be called
+ *  Are HeapAlloc and HeapPop async-safe? If number of params is kept zero then these should never be called
  * 
- *	@param signal		Numeric value of the signal invoking the handler
- *	@param info			Structure containing further information about the signal
- *	@param ucontext		Pointer to a ucontext_t struct containing user-space stack information
+ *  @param signal       Numeric value of the signal invoking the handler
+ *  @param info	        Structure containing further information about the signal
+ *  @param ucontext     Pointer to a ucontext_t struct containing user-space stack information
  */
 void SigAction(int signal, siginfo_t* info, void* ucontext);
 
@@ -85,4 +85,4 @@ int SetSAHandler(int signal);
 int ResetSAHandler(int signal);
 void RemoveFunctionsFromForward(int signal, IPluginContext* pContext);
 
-#endif // _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
+#endif // _INCLUDE_SOURCEMOD_SIGNALS_EXTENSION_PROPER_H_
