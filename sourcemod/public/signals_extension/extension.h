@@ -67,9 +67,9 @@ cell_t RemoveHandler(IPluginContext* pContext, const cell_t* params);
  *	Only functions that are considered async-signal-safe should be called from within a signal handler.
  * 
  *	Calling an IForwardManager->Execute() MIGHT be reentrant and therefore async-signal-safe
- *  ...\sourcemod\sourcepawn\vm\scripted-invoker.cpp : ScriptedInvoker::Execute(cell_t* result)
- *  and ScriptedInvoker::Invoke(cell_t* result) seem to imply so, also
- *	...\sourcemod\core\logic\ForwardSys.cpp : CForward::Execute(cell_t *result, IForwardFilter *filter)
+ *  	...\sourcemod\sourcepawn\vm\scripted-invoker.cpp : ScriptedInvoker::Execute(cell_t* result)
+ *      and ScriptedInvoker::Invoke(cell_t* result) seem to imply so, also
+ *      ...\sourcemod\core\logic\ForwardSys.cpp : CForward::Execute(cell_t *result, IForwardFilter *filter)
  * 
  *	Are HeapAlloc and HeapPop async-safe? If number of params is kept zero then these should never be called
  * 
