@@ -21,10 +21,10 @@
  *	@brief		Main implementation file of the extension.
  */
 
+#include <map>
 #include "extension.h"
 
-#define DEBUG
-#define MAX_SIGNALS 64
+//#define DEBUG
 
 #ifdef DEBUG
     #define DBGPRINT(...) rootconsole->ConsolePrint(__VA_ARGS__)
@@ -45,46 +45,62 @@ const sp_nativeinfo_t SignalNatives[] =
     {NULL,              NULL},
 };
 
-IChangeableForward* g_Handlers[MAX_SIGNALS];    /* Could also use a map or a set */
+map<int, IChangeableForward*> g_Forwards;
 
 cell_t CreateHandler(IPluginContext* pContext, const cell_t* params)
 {
+    IChangeableForward* Forward;
     int Signal = static_cast<int>(params[1]);
-    
-    if (int NumFuncs = g_Handlers[Signal]->GetFunctionCount())
+    int Err = SetSAHandler(Signal);
+
+    if (Err == NoError)
     {
-        rootconsole->ConsolePrint("ERROR: Forward for signal %i already has %i function(s) assigned", Signal, NumFuncs);
-        return FuncCountError;
+        auto it = g_Forwards.find(Signal);
+        if (it == g_Forwards.end())
+        {
+            Forward = forwards->CreateForwardEx(NULL, ET_Event, 0, NULL);
+
+            if (Forward == nullptr)
+            {
+                rootconsole->ConsolePrint("ERROR: Failed to create forward %i", Signal);
+                Err = ForwardError;
+            }
+            else if (!Forward->AddFunction(pContext, static_cast<funcid_t>(params[2])))
+            {
+                rootconsole->ConsolePrint("ERROR: Failed to add callback function for signal %i", Signal);
+                forwards->ReleaseForward(Forward);
+                Err = CallbackError;
+            }
+        }
+        else
+        {
+            DBGPRINT("Forward for signal %i is already assigned", Signal);
+            Err = FuncCountError; // not fatal
+        }
     }
 
-    if (!g_Handlers[Signal]->AddFunction(pContext, static_cast<funcid_t>(params[2])))
+    if (Err == NoError)
     {
-        rootconsole->ConsolePrint("ERROR: Failed to add callback function for signal %i", Signal);
-        return CallbackError;
+        g_Forwards.insert({ Signal, Forward });
     }
 
-    int ret = SetSAHandler(Signal);
-    
-    if (ret != NoError)
-    {
-        RemoveFunctionsFromForward(Signal, pContext);
-    }
-
-    return ret;
+    return Err;
 }
 
 cell_t RemoveHandler(IPluginContext* pContext, const cell_t* params)
 {
     int Signal = static_cast<int>(params[1]);
+    auto it = g_Forwards.find(Signal);
 
-    if (g_Handlers[Signal] != nullptr)
-    { 
-        if (ResetSAHandler(Signal) != NoError)
+    if (it != g_Forwards.end())
+    {
+        if (ResetSAHandler(it->first) != NoError)
         {
             // ...
         }
 
-        RemoveFunctionsFromForward(Signal, pContext);
+        forwards->ReleaseForward(it->second);
+        g_Forwards.erase(it);
     }
 
     return 1;
@@ -92,42 +108,26 @@ cell_t RemoveHandler(IPluginContext* pContext, const cell_t* params)
 
 void SigAction(int signal, siginfo_t* info, void* ucontext)
 {
-    // The thread's signal mask ... are restored as part of this procedure. Reset the sa_handler here. 
     // sigaction() itself is reentrant and therefore safe to call.
-    SetSAHandler(signal);
+    SetSAHandler(signal); // have to reset these
 
-    // Execute the forward. I'm currently convinced it's reentrant.
-    g_Handlers[signal]->Execute(); 
+    // Execute the callback. I'm currently convinced this is reentrant.
+    g_Forwards.find(signal)->second->Execute();
 }
 
 bool SignalForwards::SDK_OnLoad(char* error, size_t maxlen, bool late)
 {
-    for (int i = 0; i < MAX_SIGNALS; i++)
-    {
-        g_Handlers[i] = forwards->CreateForwardEx(NULL, ET_Event, 0, NULL);
-
-        if (g_Handlers[i] == nullptr)
-        {
-            rootconsole->ConsolePrint("ERROR: Failed to create a forward for signal %i", i);
-            return false;
-        }
-    }
-
     sharesys->AddNatives(myself, SignalNatives);
-
     DBGPRINT("Signals extension loaded");
     return true;
 }
 
 void SignalForwards::SDK_OnUnload()
 {
-    for (int i = 0; i < MAX_SIGNALS; i++)
+    for (auto it = g_Forwards.begin(); it != g_Forwards.end(); it++)
     {
-        if (g_Handlers != nullptr)
-        {
-            forwards->ReleaseForward(g_Handlers[i]); 
-            ResetSAHandler(i);
-        }
+        ResetSAHandler(it->first);
+        forwards->ReleaseForward(it->second); 
     }
 }
 
@@ -137,10 +137,8 @@ int SetSAHandler(int signal)
 {
     struct sigaction SigactionNew {}, SigactionOld{};
 
-    // sigset_t represents the set of signals that should be blocked when this signals 
-    // handler is executed. By default, only the signal itself will be blocked. 
+    // By default, only the signal itself will be blocked. 
     sigemptyset(&SigactionNew.sa_mask);
-
     sigaddset(&SigactionNew.sa_mask, signal);
 
     // Use the sa_sigaction() handler instead of the outdated signal().
@@ -155,20 +153,6 @@ int SetSAHandler(int signal)
         return SigactionError;
     }
 
-    if (SigactionOld.sa_handler == SIG_IGN)
-    {
-        DBGPRINT("old sa_handler: SIG_IGN ");
-    }
-    else if (SigactionOld.sa_handler == SIG_DFL)
-    {
-        DBGPRINT("old sa_handler: SIG_DFL ");
-    }
-    else // Replacing a sigaction handler is crash prone so just bail out.
-    {
-        rootconsole->ConsolePrint("ERROR: old sigaction was a handler ");
-        return SAHandlerError;
-    }
-
     return NoError;
 }
 
@@ -176,12 +160,11 @@ int ResetSAHandler(int signal)
 {
     // Reset the signals disposition to OS default and clear the forward handle.
 
-    struct sigaction SigactionDefault {};
+    struct sigaction SigactionDefault {}, Empty {};
 
-    // Could store previous actions into an array and restore from there
+    // Could store previous actions into an array and restore from there.
 
     sigemptyset(&SigactionDefault.sa_mask);
-
     sigaddset(&SigactionDefault.sa_mask, signal);
 
     SigactionDefault.sa_flags = 0;
@@ -189,19 +172,11 @@ int ResetSAHandler(int signal)
     // Set the default handler.
     SigactionDefault.sa_handler = SIG_DFL;
 
-    if (sigaction(signal, &SigactionDefault, nullptr) != 0)
+    if (sigaction(signal, &SigactionDefault, &Empty) != 0)
     {
         rootconsole->ConsolePrint("ERROR: Failed to reset sa_handler for signal %i", signal);
         return SigactionError;
     }
 
     return NoError;
-}
-
-void RemoveFunctionsFromForward(int signal, IPluginContext* pContext)
-{
-    // Remove all (should be only 1) functions from the forward.
-    int NumRemoved = g_Handlers[signal]->RemoveFunctionsOfPlugin(plsys->FindPluginByContext(pContext->GetContext()));
-
-    DBGPRINT("removed %i function(s) from g_Handlers[%i]", NumRemoved, signal);
 }
