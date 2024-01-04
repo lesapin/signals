@@ -18,6 +18,7 @@ This folder should be extracted in the same folder with your SourceMod SDK and H
 
 Your files should now get rsynced to the WSL system and all builds should happen there.
 
+If your extension isn't loading because of an outdated GLIBCXX_* version, you can follow the instructions in [2]. Renaming the stdc++ library in .../sdk2013/bin/libstdc++.so.6 will probably fix your issue.
 
 [1] https://learn.microsoft.com/en-us/cpp/build/walkthrough-build-debug-wsl2?view=msvc-170
-
+[2] https://wiki.alliedmods.net/User:Nosoop/Guide/Game_Server_Configuration#Linux_extension_failing_to_load_on_outdated_GLIBCXX_.2A_version
