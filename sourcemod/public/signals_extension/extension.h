@@ -83,6 +83,5 @@ void SigAction(int signal, siginfo_t* info, void* ucontext);
 
 int SetSAHandler(int signal);
 int ResetSAHandler(int signal);
-void RemoveFunctionsFromForward(int signal, IPluginContext* pContext);
 
 #endif // _INCLUDE_SOURCEMOD_SIGNALS_EXTENSION_PROPER_H_

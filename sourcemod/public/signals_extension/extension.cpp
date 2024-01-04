@@ -152,6 +152,11 @@ int SetSAHandler(int signal)
         rootconsole->ConsolePrint("ERROR: Failed to add sigaction handler for signal %i", signal);
         return SigactionError;
     }
+    else if (SigactionOld.sa_handler != SIG_DFL && SigactionOld.sa_handler != SIG_IGN)
+    {
+        DBGPRINT("A handler already exists for signal %i", Signal);
+        return SAHandlerError;
+    }
 
     return NoError;
 }
