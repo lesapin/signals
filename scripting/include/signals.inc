@@ -19,7 +19,7 @@
 /**
  *  @brief  Default numeric values for some signals in x86/ARM and most other systems.
  */
-enum 
+enum SignalCode
 {
     SIGHUP = 1,
     SIGINT,
@@ -57,7 +57,7 @@ enum
 /**
  *  @brief  Error codes that might be returned by CreateHandler.
  */
-enum SignalErrors
+enum SignalError
 {
     NoError = 0,
     Error,
@@ -74,7 +74,7 @@ enum SignalErrors
 /**
  *  @brief  Callback handler function type
  */
-typedef SignalHandlerCallback = function Action () 
+typedef SignalCallbackType = function Action () 
 
 /**
  *  @brief  Add a callback as a signal handler.
@@ -83,14 +83,14 @@ typedef SignalHandlerCallback = function Action ()
  *  @param callback      Function that gets called when the signal is received.
  *  @return              An error code indicating what went wrong.
  */
-native int CreateHandler(int signal, SignalHandlerCallback cb);
+native int CreateHandler(SignalCode signal, SignalCallbackType cb);
 
 /**
  *  @brief  Remove the handler associated with the signal.
  *
  *  @param signal       Numeric/enum value of the signal.
  */
-native void RemoveHandler(int signal);
+native void RemoveHandler(SignalCode signal);
 
 
 
