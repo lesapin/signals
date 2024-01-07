@@ -17,47 +17,47 @@
 */
 
 /**
- *  @brief  Default numeric values for some signals in x86/ARM and most other systems.
+ *  @brief  Default signal values in x86/ARM and most other systems.
  */
-enum SignalCode
+enum SIG
 {
-    SIGHUP = 1,
-    SIGINT,
-    SIGQUIT,
-    SIGILL,
-    SIGTRAP,
-    SIGABRT,
-    SIGBUS,
-    SIGFPE,
-    SIGKILL,
-    SIGUSR1,
-    SIGSEGv,
-    SIGUSR2,
-    SIGPIPE,
-    SIGALRM,
-    SIGTERM,
-    SIGSTKFLT,
-    SIGCHLD,
-    SIGCONT,
-    SIGSTOP,
-    SIGTSTP,
-    SIGTTIN,
-    SIGTTOU,
-    SIGURG,
-    SIGXCPU,
-    SIGXFSZ,
-    SIGVTALRM,
-    SIGPROF,
-    SIGWINCH,
-    SIGIO,
-    SIGPWR,
-    SIGSYS
+    HUP = 1,
+    INT,
+    QUIT,
+    ILL,
+    TRAP,
+    ABRT,
+    BUS,
+    FPE,
+    KILL,
+    USR1,
+    SEGV,
+    USR2,
+    PIPE,
+    ALRM,
+    TERM,
+    STKFLT,
+    CHLD,
+    CONT,
+    STOP,
+    TSTP,
+    TTIN,
+    TTOU,
+    URG,
+    XCPU,
+    XFSZ,
+    VTALRM,
+    PROF,
+    WINCH,
+    IO,
+    PWR,
+    SYS
 }
 
 /**
  *  @brief  Error codes that might be returned by CreateHandler.
  */
-enum SignalError
+enum SIGERROR
 {
     NoError = 0,
     Error,
@@ -77,20 +77,20 @@ enum SignalError
 typedef SignalCallbackType = function Action () 
 
 /**
- *  @brief  Add a callback as a signal handler.
+ *  @brief  Set a callback function as a signal handler.
  *
- *  @param signal        Numeric/enum value of the signal.
+ *  @param signal        Enum value of the signal.
  *  @param callback      Function that gets called when the signal is received.
  *  @return              An error code indicating what went wrong.
  */
-native int CreateHandler(SignalCode signal, SignalCallbackType cb);
+native int CreateHandler(SIG signal, SignalCallbackType cb);
 
 /**
  *  @brief  Remove the handler associated with the signal.
  *
- *  @param signal       Numeric/enum value of the signal.
+ *  @param signal       Enum value of the signal.
  */
-native void RemoveHandler(SignalCode signal);
+native void RemoveHandler(SIG signal);
 
 
 
