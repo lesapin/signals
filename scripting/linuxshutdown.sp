@@ -165,6 +165,11 @@ Action KickClients(Handle timer)
 
 Action EndGame(Handle timer)
 {
+	if (!isMapLoaded)
+	{
+		return Plugin_Continue;
+	}
+
     	int EndGameEnt = -1;
     	EndGameEnt = FindEntityByClassname(EndGameEnt, "game_end");
 
