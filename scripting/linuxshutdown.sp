@@ -25,9 +25,6 @@ public void OnPluginStart()
     	// Handle SIGTERM (Ctrl-C in terminal) gracefully.
 	// https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutSec=
     	SetSignalCallback(TERM, GracefulShutdown);
-    
-    	// But leave a way to shutdown the server instantly. SIGKILL can not be hooked. 
-    	SetSignalCallback(INT, InstantShutdown);
 }
 
 void SetSignalCallback(SIG signal, SignalCallbackType cb)
@@ -70,37 +67,21 @@ Action GracefulShutdown()
     	}
     	else
     	{
-    		LogMessage("Server shutting down in ~%i seconds", SHUTDOWNDELAY);
+       		// sv_shutdown shuts down the server after sv_shutdown_timeout_minutes,
+       		// or after every player has left/gets kicked from the server.
+		// https://github.com/ValveSoftware/Source-1-Games/issues/1726
+    		ServerCommand("sv_shutdown");
+    		////////////////////////////////// 
+    		
+		LogMessage("Server shutting down in ~%i seconds", SHUTDOWNDELAY);
     	}
 
     	ForceRoundTimer(SHUTDOWNDELAY);
 
-    	CreateTimer(SHUTDOWNDELAY + 1.0, GameEnd);
-    	CreateTimer(SHUTDOWNDELAY + 10.0, ShutdownServer);
+    	CreateTimer(SHUTDOWNDELAY + 1.0, EndGame);
+    	CreateTimer(SHUTDOWNDELAY + 10.0, KickClients);
 
-    	MC_PrintToChatAll("{gold}[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
-
-    	return Plugin_Continue;
-}
-
-Action InstantShutdown()
-{
-    	// https://github.com/ValveSoftware/Source-1-Games/issues/1726
-    	LogMessage("Server shutting down");
-
-       	// sv_shutdown shuts down the server after sv_shutdown_timeout_minutes,
-       	// or after every player has left/gets kicked from the server.
-    	ServerCommand("sv_shutdown");
-    	////////////////////////////////// 
-
-    	for (int client = 1; client < MaxClients; client++)
-    	{
-        	if (IsClientConnected(client) || IsClientAuthorized(client))
-        	{
-            		// Send a user-friendly shutdown message
-            		KickClient(client, "Shutting down for maintenance");
-        	}
-    	}
+    	MC_PrintToChatAll("{lightyellow}[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
 
     	return Plugin_Continue;
 }
@@ -154,13 +135,23 @@ void ForceRoundTimer(int seconds)
 	}
 }
 
-Action ShutdownServer(Handle timer)
+Action KickClients(Handle timer)
 {
-	InstantShutdown();
+    	LogMessage("Server shutting down");
+
+    	for (int client = 1; client < MaxClients; client++)
+    	{
+        	if (IsClientConnected(client) || IsClientAuthorized(client))
+        	{
+            		// Send a user-friendly shutdown message
+            		KickClient(client, "Shutting down for maintenance");
+        	}
+    	}
+
 	return Plugin_Continue;
 }
 
-Action GameEnd(Handle timer)
+Action EndGame(Handle timer)
 {
     	int EndGameEnt = -1;
     	EndGameEnt = FindEntityByClassname(EndGameEnt, "game_end");
