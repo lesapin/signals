@@ -155,7 +155,6 @@ Action KickClients(Handle timer)
     	{
         	if (IsClientConnected(client) || IsClientAuthorized(client))
         	{
-            		// Send a user-friendly shutdown message
             		KickClient(client, "Shutting down for maintenance");
         	}
     	}
@@ -167,7 +166,7 @@ Action EndGame(Handle timer)
 {
 	if (!isMapLoaded)
 	{
-		return Plugin_Continue;
+		return Plugin_Stop;
 	}
 
     	int EndGameEnt = -1;
