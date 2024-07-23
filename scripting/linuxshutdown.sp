@@ -23,6 +23,7 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
     	// Handle SIGTERM (Ctrl-C in terminal) gracefully.
+	// https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutSec=
     	SetSignalCallback(INT, GracefulShutdown);
     
     	// But leave a way to shutdown the server instantly. 
