@@ -79,10 +79,13 @@ Action GracefulShutdown()
     	}
     	else
     	{
+		// https://github.com/ValveSoftware/Source-1-Games/issues/1726
+		SetConVarBool(FindConVar("tf_allow_server_hibernation"), true, false, false);
+
        		// sv_shutdown shuts down the server after sv_shutdown_timeout_minutes,
        		// or after every player has left/gets kicked from the server.
-		// https://github.com/ValveSoftware/Source-1-Games/issues/1726
     		ServerCommand("sv_shutdown");
+
     		////////////////////////////////// 
     		
 		LogMessage("Server shutting down in ~%i seconds", SHUTDOWNDELAY);
