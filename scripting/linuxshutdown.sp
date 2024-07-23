@@ -20,11 +20,23 @@ public Plugin myinfo =
 
 #define SHUTDOWNDELAY 60
 
+bool mapIsLoaded = false;
+
 public void OnPluginStart()
 {
     	// Handle SIGTERM (Ctrl-C in terminal) gracefully.
 	// https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutSec=
     	SetSignalCallback(TERM, GracefulShutdown);
+}
+
+public void OnMapStart()
+{
+	mapIsLoaded = true;
+}
+
+public void OnMapEnd()
+{
+	mapIsLoaded = false;
 }
 
 void SetSignalCallback(SIG signal, SignalCallbackType cb)
@@ -88,9 +100,9 @@ Action GracefulShutdown()
 
 void ForceRoundTimer(int seconds)
 {
-	char buf[4];
-
-	if (GetCurrentMap(buf, sizeof(buf)) > 0) // a map is running
+	//char buf[4];
+	//if (GetCurrentMap(buf, sizeof(buf)) > 0) // a map is running
+	if (isMapLoaded)
 	{
 		int TimerEnt = -1,
 		    TimerEntKothRed = -1,
