@@ -20,7 +20,7 @@ public Plugin myinfo =
 
 #define SHUTDOWNDELAY 60
 
-bool mapIsLoaded = false;
+bool isMapLoaded = false;
 
 public void OnPluginStart()
 {
@@ -31,12 +31,12 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-	mapIsLoaded = true;
+	isMapLoaded = true;
 }
 
 public void OnMapEnd()
 {
-	mapIsLoaded = false;
+	isMapLoaded = false;
 }
 
 void SetSignalCallback(SIG signal, SignalCallbackType cb)
