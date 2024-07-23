@@ -24,10 +24,10 @@ public void OnPluginStart()
 {
     	// Handle SIGTERM (Ctrl-C in terminal) gracefully.
 	// https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutSec=
-    	SetSignalCallback(INT, GracefulShutdown);
+    	SetSignalCallback(TERM, GracefulShutdown);
     
-    	// But leave a way to shutdown the server instantly. 
-    	SetSignalCallback(KILL, InstantShutdown);
+    	// But leave a way to shutdown the server instantly. SIGKILL can not be hooked. 
+    	SetSignalCallback(INT, InstantShutdown);
 }
 
 void SetSignalCallback(SIG signal, SignalCallbackType cb)
