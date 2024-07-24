@@ -102,8 +102,6 @@ Action GracefulShutdown()
 
 void ForceRoundTimer(int seconds)
 {
-	//char buf[4];
-	//if (GetCurrentMap(buf, sizeof(buf)) > 0) // a map is running
 	if (isMapLoaded)
 	{
 		int TimerEnt = -1,
