@@ -3,7 +3,6 @@
 #include <sourcemod>
 #include <sdktools>
 #include <signals>
-#include <morecolors>
 
 #pragma newdecls required
 
@@ -96,7 +95,7 @@ Action GracefulShutdown()
     	CreateTimer(SHUTDOWNDELAY + 1.0, EndGame);
     	CreateTimer(SHUTDOWNDELAY + 10.0, KickClients);
 
-    	MC_PrintToChatAll("{yellow}[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
+    	PrintToChatAll("[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
 
     	return Plugin_Continue;
 }
