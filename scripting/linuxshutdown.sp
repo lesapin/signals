@@ -88,14 +88,14 @@ Action GracefulShutdown()
     		////////////////////////////////// 
     		
 		LogMessage("Server shutting down in ~%i seconds", SHUTDOWNDELAY);
+
+    		ForceRoundTimer(SHUTDOWNDELAY);
+
+    		CreateTimer(SHUTDOWNDELAY + 1.0, EndGame);
+    		CreateTimer(SHUTDOWNDELAY + 10.0, KickClients);
+
+    		PrintToChatAll("[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
     	}
-
-    	ForceRoundTimer(SHUTDOWNDELAY);
-
-    	CreateTimer(SHUTDOWNDELAY + 1.0, EndGame);
-    	CreateTimer(SHUTDOWNDELAY + 10.0, KickClients);
-
-    	PrintToChatAll("[SERVER] Shutting down in %i seconds for maintenance", SHUTDOWNDELAY);
 
     	return Plugin_Continue;
 }
